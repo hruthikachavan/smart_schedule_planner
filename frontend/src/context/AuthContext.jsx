@@ -10,10 +10,9 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const token = storage.get('auth_token');
-    const saved = storage.get('auth_user');
-    if (token && saved) {
-      setUser(saved);
-      // verify with backend
+    if (token) {
+      // Always verify with backend before trusting stored user.
+      // Do NOT setUser(saved) before verify — that causes stale-auth flicker.
       authApi.me()
         .then(r => { setUser(r.data); storage.set('auth_user', r.data); })
         .catch(() => { storage.remove('auth_token'); storage.remove('auth_user'); setUser(null); })
