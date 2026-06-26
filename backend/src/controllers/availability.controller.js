@@ -1,6 +1,6 @@
 const availabilityService = require('../services/availability.service');
 const scheduleService     = require('../services/schedule.service');
-const { getWeekRange }    = require('../utils/dateUtils');
+const { getWeekRange }    = require('../utils/DateUtils');
 
 const autoRegen = async (userId) => {
   try {
