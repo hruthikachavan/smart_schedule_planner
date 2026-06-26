@@ -1,19 +1,14 @@
 import { BrowserRouter } from 'react-router-dom';
-import { AppProvider }      from './context/AppContext';
-import { AuthProvider }     from './context/AuthContext';
-import { ScheduleProvider } from './context/ScheduleContext';
-import AppRoutes            from './routes/AppRoutes';
-import ScheduleToast        from './components/schedule/ScheduleToast';
+import { AppProvider }  from './context/AppContext';
+import { AuthProvider } from './context/AuthContext';
+import AppRoutes        from './routes/AppRoutes';
 
 export default function App() {
   return (
     <BrowserRouter>
       <AppProvider>
         <AuthProvider>
-          <ScheduleProvider>
-            <AppRoutes />
-            <ScheduleToast />
-          </ScheduleProvider>
+          <AppRoutes />
         </AuthProvider>
       </AppProvider>
     </BrowserRouter>
