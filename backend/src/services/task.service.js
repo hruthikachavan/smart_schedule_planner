@@ -1,6 +1,6 @@
 const { query } = require('../config/prisma');
 const scheduleService = require('./schedule.service');
-const { getWeekRange } = require('../utils/dateUtils');
+const { getWeekRange } = require('../utils/DateUtils');
 
 const computePriority = (importance, dueDate) => {
   const hoursLeft = (new Date(dueDate) - new Date()) / 3_600_000;
