@@ -5,11 +5,12 @@ import { getWeekRange } from '../utils/date';
 const ScheduleContext = createContext(null);
 
 export function ScheduleProvider({ children }) {
-  const [todayBlocks,  setTodayBlocks]  = useState([]);
-  const [weekData,     setWeekData]     = useState([]);
-  const [stats,        setStats]        = useState(null);
-  const [refreshing,   setRefreshing]   = useState(false);
-  const [toast,        setToast]        = useState(null);
+  const [todayBlocks,   setTodayBlocks]   = useState([]);
+  const [weekData,      setWeekData]      = useState([]);
+  const [stats,         setStats]         = useState(null);
+  const [refreshing,    setRefreshing]    = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [toast,         setToast]         = useState(null);
   const toastTimer  = useRef(null);
   const initialized = useRef(false);
 
@@ -47,7 +48,6 @@ export function ScheduleProvider({ children }) {
       try {
         const hasSchedule = await fetchData();
         if (!hasSchedule) {
-          // Check whether there's anything to schedule
           const [tasksRes, slotsRes] = await Promise.all([
             taskApi.getAll(),
             availabilityApi.getAll(),
@@ -56,21 +56,21 @@ export function ScheduleProvider({ children }) {
           const slots        = slotsRes.data || [];
 
           if (pendingTasks.length > 0 && slots.length > 0) {
-            // Auto-generate silently — no toast on first load
             const { startDate, endDate } = getWeekRange();
             await scheduleApi.generate({ startDate, endDate });
             await fetchData();
           }
         }
       } catch { /* silent */ }
-      finally { setRefreshing(false); }
+      finally {
+        setRefreshing(false);
+        setIsInitialized(true);
+      }
     };
 
     init();
   }, [fetchData]);
 
-  // Called by Tasks/Availability pages after they mutate data — schedule already
-  // regenerated on the backend, so just re-fetch and show a toast.
   const refreshSchedule = useCallback(async (toastMsg) => {
     setRefreshing(true);
     try {
@@ -81,7 +81,7 @@ export function ScheduleProvider({ children }) {
   }, [fetchData, showToast]);
 
   return (
-    <ScheduleContext.Provider value={{ todayBlocks, weekData, stats, refreshing, refreshSchedule, toast, showToast }}>
+    <ScheduleContext.Provider value={{ todayBlocks, weekData, stats, refreshing, isInitialized, refreshSchedule, toast, showToast }}>
       {children}
     </ScheduleContext.Provider>
   );
