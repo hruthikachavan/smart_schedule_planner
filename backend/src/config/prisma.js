@@ -1,6 +1,16 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
+const dbUrl = process.env.DATABASE_URL;
+
+console.log("DATABASE_URL EXISTS:", !!dbUrl);
+
+if (dbUrl) {
+  console.log(
+    dbUrl.replace(/:\/\/(.*?):(.*?)@/, "://$1:****@")
+  );
+}
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
