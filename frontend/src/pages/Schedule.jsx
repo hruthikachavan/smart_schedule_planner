@@ -33,7 +33,7 @@ export default function Schedule() {
   const [weekBase,      setWeekBase]      = useState(() => { const d = new Date(); d.setHours(0,0,0,0); return d; });
   const [selectedDay,   setSelectedDay]   = useState(null);
 
-  const { todayBlocks, weekData: ctxWeekData, stats: ctxStats, refreshing, refreshSchedule } = useSchedule();
+  const { todayBlocks, weekData: ctxWeekData, stats: ctxStats, refreshing, isInitialized, refreshSchedule } = useSchedule();
 
   const [localWeekData, setLocalWeekData] = useState(null);
   const [localStats,    setLocalStats]    = useState(null);
@@ -116,7 +116,7 @@ export default function Schedule() {
   const isRefreshing = refreshing || generating;
 
   // While the context is doing its initial auto-generate, show skeletons
-  const isInitializing = (loading || refreshing) && !hasSchedule;
+  const isInitializing = !isInitialized || ((loading || refreshing) && !hasSchedule);
 
   const selectedDayBlocks = selectedDay
     ? (weekData.find(d => d.date === selectedDay)?.blocks || [])
