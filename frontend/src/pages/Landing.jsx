@@ -33,7 +33,7 @@ export default function Landing() {
           </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={() => navigate(ROUTES.LOGIN)}>Sign in</Button>
-            <Button size="sm" onClick={() => navigate(ROUTES.REGISTER)}>Get Started Free</Button>
+            
           </div>
         </div>
       </nav>
