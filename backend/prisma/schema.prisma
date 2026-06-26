@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+ 
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Models
+
+model User {
+
+  id            String   @id @default(uuid())
+
+  name          String
+
+  email         String   @unique
+
+  passwordHash  String
+
+  tasks         Task[]
+
+  slots         AvailabilitySlot[]
+
+  schedules     DailySchedule[]
+
+  createdAt     DateTime @default(now())
+
+  updatedAt     DateTime @updatedAt
+}
+
+
+
+model AvailabilitySlot {
+
+  id         String @id @default(uuid())
+
+  userId     String
+
+  user       User @relation(fields: [userId], references: [id])
+
+  dayOfWeek  Int
+
+  startTime  String
+
+  endTime    String
+
+  createdAt  DateTime @default(now())
+}
+
+model Task {
+
+  id                  String @id @default(uuid())
+
+  userId              String
+
+  user                User @relation(fields: [userId], references: [id])
+
+  title               String
+
+  description         String?
+
+  category            String?
+
+  importance          Int
+
+  dueDate             DateTime
+
+  userEstimatedTime   Int?
+
+  aiPredictedTime     Int?
+
+  actualTime          Int?
+
+  priorityScore       Float?
+
+  priorityQuadrant    String?
+
+  status              String @default("PENDING")
+
+  completedAt         DateTime?
+
+  schedules           DailySchedule[]
+
+  createdAt           DateTime @default(now())
+
+  updatedAt           DateTime @updatedAt
+}
+
+
+model DailySchedule {
+
+  id               String   @id @default(uuid())
+
+  userId           String
+
+  user             User @relation(fields:[userId], references:[id])
+
+  taskId           String
+
+  task             Task @relation(fields:[taskId], references:[id])
+
+  date             DateTime
+
+  startTime        DateTime
+
+  endTime          DateTime
+
+  allocatedMinutes Int
+
+  generationVersion Int @default(1)
+
+  rescheduleReason String?
+
+  status           String @default("PLANNED")
+
+  wasModified      Boolean @default(false)
+
+  createdAt        DateTime @default(now())
+
+  updatedAt        DateTime @updatedAt
+}
+
+
+
+model UserBehavior {
+
+  id                    String   @id @default(uuid())
+
+  userId                String
+
+  taskId                String?
+
+  taskCategory          String?
+
+  importance            Int?
+
+  
+  originalEstimatedTime Int?
+
+  
+  aiPredictedTime       Int?
+
+  
+  actualTime            Int?
+
+  
+  originalAllocatedTime Int?
+
+  
+  modifiedAllocatedTime Int?
+
+  
+  wasScheduleModified   Boolean @default(false)
+
+  
+  scheduledHour         Int?
+
+  
+  completedHour         Int?
+
+  
+  createdAt             DateTime @default(now())
+}
